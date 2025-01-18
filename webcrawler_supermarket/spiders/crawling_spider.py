@@ -7,13 +7,11 @@ class CrawlingSpider(CrawlSpider):
     start_urls = ["https://www.compra-agora.com/"]
 
     rules = (
-        # LinkExtractor para categorias principais (ignorando subcategorias)
+        # LinkExtractor para categorias principais, o regex está buscando URLs que seguem este formato: /loja/{categoria}/{id}
         Rule(LinkExtractor(allow=r'/loja/([^/]+)/\d+$'), callback='parse_categoria', follow=True),
     )
 
     def parse_categoria(self, response):
-        # Extração do nome da categoria (ajuste conforme necessário)
-        categoria = response.xpath("//h1[contains(@class, 'titulo-categoria')]//text()").get()
 
         # Exibindo o nome da categoria e a URL
         yield {
