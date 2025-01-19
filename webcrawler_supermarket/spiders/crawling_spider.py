@@ -1,8 +1,9 @@
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 import logging
+import scrapy
 
-class CrawlingSpider(CrawlSpider):
+class CrawlingSpider(scrapy.Spider):
     name = "crawling_compra_agora"
     allowed_domains = ["www.compra-agora.com"]
     start_urls = ["https://www.compra-agora.com/"]
@@ -16,16 +17,27 @@ class CrawlingSpider(CrawlSpider):
     )
 
 
-    def parse_categoria(self, response):
+    def parse(self, response):
+        categorias = self.get_categories(response)
+        for categoria in categorias:
+            # Certifique-se de que a URL completa seja usada
+            categoria_url = response.urljoin(categoria['url'])
+            yield response.follow(categoria_url, callback=self.parse_produtos)
 
+    def get_categories(self, response):
+        categorias = []
         hover_menu_items = response.css("ul.hover-menu > li.lista-menu-itens")
-        
         for item in hover_menu_items:
             url = item.css("a::attr(href)").get(default="").strip()
-            logging.info(f"URL extraída: {url}")
-
             if url:
-                logging.info(f"URL: {url}")
-                yield {
-                    'url': url,
-                }
+                categorias.append({'url': url})
+        return categorias
+
+    def parse_produtos(self, response):
+        produtos = response.css('li.shelf-item')
+        for produto in produtos:
+            yield {
+                'nome': produto.css('a.produto-nome::text').get(),
+                'marca': produto.css('a.produto-marca::text').get(),
+                'imagem': produto.css('img::attr(src)').get(),
+            }
