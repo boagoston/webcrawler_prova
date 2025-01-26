@@ -3,13 +3,22 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+
 from scrapy import signals
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
 
-class WebcrawlerSupermarketSpiderMiddleware:
+from scrapy import signals
+from scrapy.http import HtmlResponse, TextResponse
+from curl_cffi import requests
+
+from scrapy.http import TextResponse
+from curl_cffi import requests
+
+
+class WebcrawlerServimedSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -56,7 +65,7 @@ class WebcrawlerSupermarketSpiderMiddleware:
         spider.logger.info("Spider opened: %s" % spider.name)
 
 
-class WebcrawlerSupermarketDownloaderMiddleware:
+class WebcrawlerServimedDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
@@ -101,3 +110,42 @@ class WebcrawlerSupermarketDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+
+
+class CurlCffiMiddleware:
+    def process_request(self, request, spider):
+        try:
+            headers = {}
+            for key, value in request.headers.items():
+                headers[key.decode('utf-8')] = value[0].decode('utf-8')
+
+            cookies = {}
+            for cookie in request.cookies:
+                cookies[cookie['name']] = cookie['value']
+
+            body = request.body
+            if isinstance(body, bytes):
+                body = body.decode('utf-8')
+
+            response = requests.request(
+                method=request.method,
+                url=request.url,
+                headers=headers,
+                cookies=cookies,
+                data=body,
+                impersonate="chrome110",  
+                verify=False
+            )
+
+            return TextResponse(
+                url=response.url,
+                status=response.status_code,
+                headers=response.headers,
+                body=response.content,
+                encoding='utf-8',
+                request=request
+            )
+        except Exception as e:
+            spider.logger.error(f"Error in CurlCffiMiddleware: {e}")
+            return None

@@ -1,4 +1,4 @@
-# Scrapy settings for webcrawler_supermarket project
+# Scrapy settings for webcrawler_servimed project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,17 +7,17 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "webcrawler_supermarket"
+BOT_NAME = "webcrawler_servimed"
 
-SPIDER_MODULES = ["webcrawler_supermarket.spiders"]
-NEWSPIDER_MODULE = "webcrawler_supermarket.spiders"
+SPIDER_MODULES = ["webcrawler_servimed.spiders"]
+NEWSPIDER_MODULE = "webcrawler_servimed.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "webcrawler_supermarket (+http://www.yourdomain.com)"
+#USER_AGENT = "webcrawler_servimed (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -45,13 +45,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    "webcrawler_supermarket.middlewares.WebcrawlerSupermarketSpiderMiddleware": 543,
+#    "webcrawler_servimed.middlewares.WebcrawlerServimedSpiderMiddleware": 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    "webcrawler_supermarket.middlewares.WebcrawlerSupermarketDownloaderMiddleware": 543,
+#    "webcrawler_servimed.middlewares.WebcrawlerServimedDownloaderMiddleware": 543,
 #}
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    "webcrawler_supermarket.pipelines.WebcrawlerSupermarketPipeline": 300,
+#    "webcrawler_servimed.pipelines.WebcrawlerServimedPipeline": 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -91,5 +91,6 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-FEED_FORMAT = 'json'
-FEED_URI = 'produtos.json'
+DOWNLOADER_MIDDLEWARES = {
+    'webcrawler_servimed.middlewares.CurlCffiMiddleware': 543,  # Add this line to enable custom middleware
+}
