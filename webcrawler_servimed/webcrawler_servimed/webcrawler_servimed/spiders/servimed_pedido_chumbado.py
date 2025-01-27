@@ -21,6 +21,9 @@ class ServimedPedidoSpider(scrapy.Spider):
     load_dotenv()
     accesstoken = os.getenv('ACCESS_TOKEN')
     cookies = os.getenv('COOKIES')
+
+    print(f"accesstoken: {accesstoken}")
+    print(f"cookies: {cookies}")
     
     
     
@@ -65,13 +68,16 @@ class ServimedPedidoSpider(scrapy.Spider):
                 self.salvar_json({"ERRO": "PEDIDO_NAO_ENCONTRADO"})
             else:
                 self.log(f"Pedido {self.pedido_numero} encontrado.")
+                
                 rejeicao = data.get('rejeicao', None)
+                if rejeicao is None:
+                    rejeicao = data.get('pedidoStatusId', "Desconhecido")
+                
                 rejeicao = str(rejeicao).strip()
                 self.log(f"Situação: {rejeicao}")
 
                 itens = []
 
-                # Extrai os itens
                 for item in data.get('itens', []):
                     produto = item.get('produto', {})
                     produto_id = produto.get('id', None)
@@ -83,6 +89,7 @@ class ServimedPedidoSpider(scrapy.Spider):
                         'descricao': descricao,
                         'quantidade_faturada': quantidade_faturada
                     })
+                
                 json_data = {
                     'motivo': rejeicao,
                     'itens': itens
@@ -99,13 +106,10 @@ class ServimedPedidoSpider(scrapy.Spider):
             self.log(f"Request failed with status: {response.status}")
 
     def salvar_json(self, data):
-        # Cria a pasta 'pedidos' caso ela não exista
         if not os.path.exists('pedidos'):
             os.makedirs('pedidos')
 
-        # Define o caminho completo para o arquivo JSON dentro da pasta 'pedidos'
         output_file = os.path.join('pedidos', f"pedido_{self.pedido_numero}.json")
 
-        # Escrever os dados no arquivo
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)

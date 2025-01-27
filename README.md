@@ -50,18 +50,13 @@ Este scraper foi desenvolvido com Scrapy para coletar detalhes de pedidos do sis
 
 ### Questão 3. Fibonacci Recursivo
 
-    def  fibonacci(n):
-    
-	    if  n<=1:
-    
-		    return  n
-    
-	    else:
-    
-		    return  fibonacci(n-1)+fibonacci(n-2)
-    
-      
-    print(fibonacci(9))
+A solução esta no arquivo [fibonacci_recursivo.py](https://github.com/boagoston/webcrawler_prova/blob/main/fibonacci_recursivo.py)
+
+Para execução, é só estar na raiz do Docker e rodar o comando abaixo, sendo n = numero_desejado
+
+    python3 fibonnaci_recursivo.py <numero_desejado>
+
+
 
 ### Questão 4. 
 
@@ -81,3 +76,18 @@ Aqui, F(3) e F(2) são recalculados várias vezes, o que torna a solução muito
 
 #### Questão 5
 
+-   **VPN e Subnets**:
+    
+    -   A VPN permite que você conecte redes de forma segura. Em uma infraestrutura de nuvem, você pode criar uma VPN para conectar a rede local da sua empresa a uma subnet privada na nuvem. Isso permite que dispositivos na sua rede local acessem recursos na nuvem de maneira segura, como se estivessem na mesma rede.
+    -   Ao usar VPN, as subnets são importantes porque você precisa especificar quais subnets na nuvem devem ser acessíveis via VPN.
+    
+-   **VPN e Security Groups**:
+    
+    -   Quando você usa uma VPN para conectar sua rede local à nuvem, os **security groups** entram em cena para proteger as instâncias ou recursos na nuvem. A VPN cria um "túnel" de tráfego seguro, mas as regras de segurança (nos security groups) controlam qual tráfego pode acessar seus recursos.
+    -   Por exemplo, um security group pode ser configurado para permitir tráfego somente da sua rede local (via VPN) , bloquear tráfego de outras redes, gerenciamento do acesso com niveis diferentes para estrutura.
+
+-   **Subnets e Security Groups**:
+    
+    -   As subnets e os **security groups** trabalham juntos para isolar e proteger suas instâncias. A subnet define o "contexto" de rede (onde suas instâncias estão localizadas), enquanto os security groups controlam quem pode acessar essas instâncias.
+    -   Você pode ter uma instância em uma subnet privada que só pode ser acessada de outras instâncias dentro da mesma subnet ou de instâncias em subnets públicas (se configurado com regras adequadas nos security groups).
+    - um grupo de segurança atua como um firewall que controla o tráfego permitido de e para os recursos em sua nuvem privada virtual (VPC).

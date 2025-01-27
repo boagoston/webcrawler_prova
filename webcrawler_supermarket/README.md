@@ -46,7 +46,7 @@ O script começará a execução, coletando dados das categorias do site e salva
 
 Depois de buildar e executar sua imagem docker e estar na raiz da mesma. O terminal precisa refletir a imagem abaixo:
 
-![](https://i.imgur.com/9LjycDB.png)
+![alt](https://i.imgur.com/9LjycDB.png)
 
 Execute a sequencia de comandos abaixo para executar o codigo
 

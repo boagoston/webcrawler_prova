@@ -37,8 +37,26 @@ Todos os requisitos estão listados no arquivo `requirements.txt` e serão insta
 
 ## Execução
 
-Para executar o script, basta rodar o comando abaixo substituindo `<número_do_pedido>` pelo número do pedido desejado:
+Depois de buildar e executar sua imagem docker e estar na raiz da mesma. O terminal precisa refletir a imagem abaixo:
+
+![alt](https://i.imgur.com/9LjycDB.png)
+
+Para executar o script, basta rodar a sequencia de comandos abaixo substituindo `<número_do_pedido>` pelo número do pedido desejado:
+
+    cd webcrawler_servimed
+    cd webcrawler_servimed
+    python3 busca_servimed.py <numero_do_pedido>
+
+Após a execução é possivel verificar os pedidos na pasta pedido
+
+    cd pedidos
+    cat <pedido_xxxxxxx>
+
+resultado utilizando `python3 busca_servimed.py 511082` exemplo abaixo
+
 
 ## Exemplo 
 
 ![enter image description here](https://i.imgur.com/7CPJls9.png)
+
+
