@@ -18,8 +18,8 @@ class crawlerServimed(scrapy.Spider):
     
     def start_requests(self):
         login_data = {
-            "usuario": "juliano@farmaprevonline.com.br",
-            "senha": "a007299A"
+            "usuario": "",
+            "senha": ""
         }
 
         self.headers = {
