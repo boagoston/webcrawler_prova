@@ -41,3 +41,35 @@ O script começará a execução, coletando dados das categorias do site e salva
 ### Exemplo de Saída
 
 ![exemplo](https://i.imgur.com/O6vnwVF.png)
+
+### EXECUÇÃO 
+
+Depois de buildar e executar sua imagem docker e estar na raiz da mesma. O terminal precisa refletir a imagem abaixo:
+
+![](https://i.imgur.com/9LjycDB.png)
+
+Execute a sequencia de comandos abaixo para executar o codigo
+
+    cd webcrawler_supermarket/
+    cd webcrawler_supermarket/
+    cd spiders
+    scrapy crawl crawling_compra
+
+Após o ultimo comando o crawler deve começar a execução e extrair os produtos de compra-agora.
+Quando a execução finalizar , podemos utilizar o comando **ls** para verificar o conteudo da pasta e se tudo estiver ocorrido bem teremos 2 arquivos 
+
+processed_urls.txt 
+produtos.json
+
+executando o cat em cada um , teremos os respectivos resultados (exemplo)
+
+processed_urls.txt
+
+![]https://i.imgur.com/1dYlxeQ.png)
+
+
+produtos.json
+
+![alt](https://i.imgur.com/jPewuzM.png)
+
+

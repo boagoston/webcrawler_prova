@@ -2,7 +2,7 @@ import logging
 import scrapy
 
 class CrawlingSpider(scrapy.Spider):
-    name = "crawling_compra_agora"
+    name = "crawling_compra"
     allowed_domains = ["www.compra-agora.com"]
     start_urls = ["https://www.compra-agora.com/"]
 
