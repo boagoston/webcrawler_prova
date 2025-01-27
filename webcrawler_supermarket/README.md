@@ -65,7 +65,7 @@ executando o cat em cada um , teremos os respectivos resultados (exemplo)
 
 processed_urls.txt
 
-![]https://i.imgur.com/1dYlxeQ.png)
+![alt]https://i.imgur.com/1dYlxeQ.png)
 
 
 produtos.json
