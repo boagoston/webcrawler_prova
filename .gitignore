@@ -169,3 +169,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+#arquivos
+processed_urls.txt
+pedido_*.json

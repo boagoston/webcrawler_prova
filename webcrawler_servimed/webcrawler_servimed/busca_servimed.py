@@ -3,7 +3,7 @@ import subprocess
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Uso: python seumodulo.py <número_do_pedido>")
+        print("Uso: python busca_servimed.py <número_do_pedido>")
         sys.exit(1)
 
     pedido_numero = sys.argv[1]

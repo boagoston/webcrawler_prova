@@ -93,3 +93,4 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 FEED_FORMAT = 'json'
 FEED_URI = 'produtos.json'
+LOG_LEVEL = 'INFO'

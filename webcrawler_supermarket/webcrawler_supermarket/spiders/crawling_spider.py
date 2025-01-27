@@ -1,11 +1,5 @@
-from scrapy.spiders import CrawlSpider, Rule
 import logging
 import scrapy
-import os
-from dotenv import load_dotenv
-from nacl.signing import SigningKey
-from nacl.encoding import HexEncoder
-
 
 class CrawlingSpider(scrapy.Spider):
     name = "crawling_compra_agora"
@@ -15,12 +9,12 @@ class CrawlingSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        load_dotenv()
-        self.username = os.getenv("USERNAME")
-        self.password = os.getenv("PASSWORD")
-                
-        if not self.username or not self.password:
-            raise ValueError("As variáveis de ambiente USERNAME e PASSWORD não foram definidas!")
+        self.output_file = "processed_urls.txt"  # Nome do arquivo onde as URLs serão salvas
+
+        # Cria ou limpa o arquivo no início
+        with open(self.output_file, "w") as f:
+            f.write("")
+
 
     def start_requests(self):
         yield scrapy.Request(
@@ -28,81 +22,73 @@ class CrawlingSpider(scrapy.Spider):
             callback=self.parse,
         )
 
-    # def get_login_page(self, response):
-    #     data = {
-    #         "usuarioCnpj": self.username,
-    #         "usuarioSenhaCA": self.password
-    #     }
-    #     logging.info(f"data: {data}" )
-
-        
-
-    #     yield scrapy.FormRequest(
-    #         url="https://www.compra-agora.com/cliente/logar",
-    #         formdata={"data": data},
-    #         headers={
-    #             "Content-Type": "application/x-www-form-urlencoded",
-    #             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
-    #         },
-    #         callback=self.after_login,
-    #     )
-
-    # def after_login(self, response):
-    #     json_response = response.json()
-
-    #     if json_response.get("success"):
-    #         logging.info("Login realizado com sucesso!")
-    #         user_id = json_response.get("user_id")
-    #         user_type = json_response.get("user_type")
-    #         logging.info(f"ID do usuário: {user_id}, Tipo: {user_type}")
-
-    #         # Depois de logado, agora realiza a extração das categorias
-    #         yield scrapy.Request(
-    #             url="https://www.compra-agora.com/", 
-    #             callback=self.parse
-    #         )
-    #     else:
-    #         logging.error(f"Resposta do login: {json_response}")
-    #         logging.error("Falha no login")
-
     def parse(self, response):
-        # Extração das categorias
         categorias = self.get_categories(response)
-        logging.info(f"Categorias encontradas: {categorias}")
+        logging.debug(f"Categorias encontradas: {categorias}")
         for categoria in categorias:
-            categoria_url = response.urljoin(categoria['url'])
-            yield response.follow(categoria_url, callback=self.parse_produtos)
+            categoria_url = categoria['url']
+            categoria_api_url = categoria_url.replace("/loja/", "/api/catalogproducts/")
+            yield scrapy.Request(
+                url=response.urljoin(categoria_api_url),
+                callback=self.parse_produtos,
+                meta={'categoria_texto': categoria['texto']}
+            )
 
     def get_categories(self, response):
         categorias = []
         hover_menu_items = response.css("ul.hover-menu > li.lista-menu-itens")
         for item in hover_menu_items:
             url = item.css("a::attr(href)").get(default="").strip()
+            text = ''.join(item.css("a *::text").getall()).strip()
             if url:
-                categorias.append({'url': url})
+                categorias.append({'texto': text, 'url': url})
         return categorias
 
     def parse_produtos(self, response):
-        produtos = response.css('ul#shelf-content-items li.shelf-item')
+        try:
+            paginas_total = response.json().get('paginacao', {}).get('PaginasTotal', 1)
+        except ValueError:
+            logging.error("Erro ao tentar decodificar a resposta JSON.")
+            return
 
-        logging.info(f"HTML da página: {response.text[:1000]}")
+        categoria_texto = response.meta.get('categoria_texto', 'Desconhecido')
+        logging.info(f"Extraindo produtos da categoria: {categoria_texto}")
 
-        with open("pagina_produtos.html", "w", encoding="utf-8") as f:
-            f.write(response.text)
+        for pagina in range(1, paginas_total + 1):
+            pagina_url = f"{response.url}?p={pagina}"
+            yield scrapy.Request(
+                url=pagina_url,
+                callback=self.parse_produtos_pagina,
+                meta={'categoria_texto': categoria_texto, 'pagina_url': pagina_url}
+            )
 
-        logging.info(f"Produtos encontrados: {len(produtos)}")
+    def parse_produtos_pagina(self, response):
+        pagina_url = response.meta.get('pagina_url')
+
+        self.save_processed_url(pagina_url)
+
+        produtos = response.json().get('produtos', [])
+        logging.debug(f"Produtos encontrados nesta página: {len(produtos)}")
 
         for produto in produtos:
-            nome = produto.css('a.produto-nome::text').get(default="").strip()
-            marca = produto.css('a.produto-marca::text').get(default="").strip()
-            imagem = produto.css('img::attr(src)').get(default="").strip()
+            nome = produto.get('Nome', '').strip()
+            marca = produto.get('Marca', '').strip()
+            foto = produto.get('Foto', '')
+            imagem_url = f"https://images-unilever.ifcshop.com.br/produto/{foto}"
 
-            if nome or marca or imagem:
+            logging.info(f"Produto encontrado: {nome} - {marca} - {imagem_url}")
+
+            if nome or marca or imagem_url:
                 yield {
                     'nome': nome,
                     'marca': marca,
-                    'imagem': imagem,
+                    'imagem_url': imagem_url
                 }
             else:
-                logging.warning(f"Produto não extraído corretamente: {produto.get()}")
+                logging.warning(f"Produto não extraído corretamente: {produto}")
 
+    def save_processed_url(self, url):
+        """Salva a URL processada em um arquivo de texto."""
+        with open(self.output_file, "a") as f:
+            f.write(url + "\n")
+        logging.info(f"URL salva: {url}")
