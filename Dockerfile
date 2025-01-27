@@ -14,8 +14,17 @@ RUN pip install --upgrade pip
 COPY requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
+# Copiar o script de entrada
+COPY entrypoint.sh /entrypoint.sh
+
+# Tornar o script executável
+RUN chmod +x /entrypoint.sh
+
+# Configurar o entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Exponha a porta, caso precise de uma porta para o seu app
 # EXPOSE 8000  # Descomente caso use uma aplicação web
 
 # Comando para rodar a aplicação (substitua conforme necessário)
-# CMD ["python", "app.py"]  # Exemplo: rodando um app Python específico
+

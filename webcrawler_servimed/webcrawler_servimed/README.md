@@ -37,6 +37,18 @@ Todos os requisitos estão listados no arquivo `requirements.txt` e serão insta
 
 ## Execução
 
+Existe duas formas de execução , uma utilizando diretamente a imagem para rodar um docker run e outra acessando o terminal do docker e executando de forma manual.
+
+#### Execução diretamente com o container:
+
+Executar no terminal o comando `docker images` para pegar o nome do container criado caso não lembre e execute o comando
+
+  docker run -it <nome_imagem> <numero_pedido>
+
+  ex: docker run it webcrawler_test 511082
+
+#### Execução manual
+
 Depois de buildar e executar sua imagem docker e estar na raiz da mesma. O terminal precisa refletir a imagem abaixo:
 
 ![alt](https://i.imgur.com/9LjycDB.png)
