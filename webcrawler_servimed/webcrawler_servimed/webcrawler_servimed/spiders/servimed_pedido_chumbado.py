@@ -3,6 +3,7 @@ import json
 import uuid
 import sys
 import os
+from dotenv import load_dotenv
 
 class ServimedPedidoSpider(scrapy.Spider):
     def __init__(self, pedido_numero=None, *args, **kwargs):
@@ -13,9 +14,15 @@ class ServimedPedidoSpider(scrapy.Spider):
         self.pedido_numero = pedido_numero
         self.generated_uuid = str(uuid.uuid1())
     
+    
+    
     name = 'servimed_pedido'
-    accesstoken = '2c7106d0-dbf5-11ef-9c3d-858a85066fc4'
-    cookies = 'sessiontoken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RpZ29Vc3VhcmlvIjoyMjg1MCwidG9rZW4iOiIyYzcxMDZkMC1kYmY1LTExZWYtOWMzZC04NThhODUwNjZmYzQiLCJpYXQiOjE3Mzc5MDM5MzcsImV4cCI6MTczNzk0NzEzNywiYXVkIjoiaHR0cDovL3NlcnZpbWVkLmNvbS5iciIsImlzcyI6IlNlcnZpbWVkIiwic3ViIjoic2VydmltZWRAU2VydmltZWQuY29tLmJyIn0.xBUN63jVsBd6J_PBHcpZwpjMja1z3NXN7kPJpkekFO7pcms5ELshoCI-u5rQgILKuHfoEZ_lvXQ0B4XiAPwSfA; accesstoken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RpZ29Vc3VhcmlvIjoyMjg1MCwidG9rZW4iOiIyYzcxMDZkMC1kYmY1LTExZWYtOWMzZC04NThhODUwNjZmYzQiLCJpYXQiOjE3Mzc5MDM5MzcsImV4cCI6MTczNzk0NzEzNywiYXVkIjoiaHR0cDovL3NlcnZpbWVkLmNvbS5iciIsImlzcyI6IlNlcnZpbWVkIiwic3ViIjoic2VydmltZWRAU2VydmltZWQuY29tLmJyIn0.xBUN63jVsBd6J_PBHcpZwpjMja1z3NXN7kPJpkekFO7pcms5ELshoCI-u5rQgILKuHfoEZ_lvXQ0B4XiAPwSfA'
+
+    load_dotenv()
+    accesstoken = os.getenv('ACCESS_TOKEN')
+    cookies = os.getenv('COOKIES')
+    
+    
     
     def start_requests(self):
         url = f'https://peapi.servimed.com.br/api/Pedido/ObterTodasInformacoesPedidoPendentePorId/{self.pedido_numero}'
